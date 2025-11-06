@@ -1,0 +1,8 @@
+# Ignorar carpetas del sistema y cachés
+node_modules
+.git
+android/.gradle
+android/.idea
+android/build
+ios/build
+C:/Users/Informatica/AppData
