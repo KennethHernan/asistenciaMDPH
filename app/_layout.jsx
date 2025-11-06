@@ -25,6 +25,11 @@ export default function RootLayout() {
             },
           }}
         >
+          {/* Pestaña INDEX */}
+          <Tabs.Screen
+            name="index"
+            options={{ href: null }}
+          />
           {/* Pestaña DASHBOARD */}
           <Tabs.Screen
             name="Dashboard"
