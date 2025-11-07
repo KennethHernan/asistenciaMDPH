@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Asistencia MDPH",
-    "slug": "Asistencia-MDPH",
+    "slug": "react-native-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
