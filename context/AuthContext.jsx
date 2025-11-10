@@ -1,30 +1,73 @@
+import Loanding from "@/components/loanding";
+import { auth, db } from "@/firebase/firebaseConfig";
+import { capturarDia, capturarFecha, capturarMes } from "@/service/fechaHoy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import { child, get, ref, set, update } from "firebase/database";
 import { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import 'react-native-get-random-values';
+import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
-import { db } from "../firebase/firebaseConfig";
-import { capturarDia, capturarFecha, capturarMes } from "../service/fechaHoy";
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loanding, setLoanding] = useState(false);
+  const [user, setUser] = useState("");
+  const [loandingBtnEntrada, setLoandingBtnEntrada] = useState(false);
+  const [loandingBtnSalida, setLoandingBtnSalida] = useState(false);
+  const [loandingBtnFaltaJ, setLoandingBtnFaltaJ] = useState(false);
+  const [loandingBtnFaltaI, setLoandingBtnFaltaI] = useState(false);
   const [loandingMain, setLoandingMain] = useState(true);
   const [entrada, setEntrada] = useState(false);
   const [salida, setSalida] = useState(false);
   const [newDia, setNewdia] = useState(false);
   const [asisteniciasAll, setAsistencias] = useState(false);
+  const [Autentication, setAutentication] = useState(false);
+  const [Registrado, setRegistrado] = useState(false);
   const [fechaHoy, setFechaHoy] = useState("");
   const [mes, setMes] = useState("");
   const [horaLimite, setHoraLimite] = useState("08:45:00 a. m.");
 
+  const crearUser = async (email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      setUser(user);
+      setRegistrado(true);
+      setAutentication(true);
+      return user;
+    } catch (error) {
+      return error
+    }
+  };
+
+  const cerrarSesion = async () => {
+    await signOut(auth);
+    setAutentication(false);
+    console.log("Sesión cerrada");
+  };
+
+  const iniciarSesion = async (email, password) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("Sesión iniciada");
+      setAutentication(true);
+    } catch (error) {
+      console.error("Eror: " + error.message);
+    }
+  };
+
   const createNewAsistencia = async () => {
     if (salida) return;
-    setLoanding(true);
+    setLoandingBtnEntrada(true);
     try {
       const asistenId = uuidv4();
       const diaHoy = capturarDia();
@@ -44,10 +87,10 @@ export const AuthProvider = ({ children }) => {
       };
       await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       setEntrada(true);
-      setLoanding(false);
+      setLoandingBtnEntrada(false);
       return;
     } catch (error) {
-      setLoanding(false);
+      setLoandingBtnEntrada(false);
       console.error("Error al crear la asistencia:", error);
       throw error;
     }
@@ -56,7 +99,7 @@ export const AuthProvider = ({ children }) => {
   const registrarSalida = async () => {
     if (!entrada) return;
 
-    setLoanding(true);
+    setLoandingBtnSalida(true);
 
     try {
       const data = await AsyncStorage.getItem("asistencia");
@@ -71,9 +114,9 @@ export const AuthProvider = ({ children }) => {
         await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       }
       setSalida(true);
-      setLoanding(false);
+      setLoandingBtnSalida(false);
     } catch (error) {
-      setLoanding(false);
+      setLoandingBtnSalida(false);
       console.error("Error al crear la asistencia:", error);
       throw error;
     }
@@ -100,6 +143,7 @@ export const AuthProvider = ({ children }) => {
       setAsistencias(data);
     } catch (error) {
       console.error("Error al cargar asistencias:", error);
+      setLoandingMain(false);
     } finally {
       setLoandingMain(false);
     }
@@ -113,6 +157,7 @@ export const AuthProvider = ({ children }) => {
         const asistencia = JSON.parse(data);
 
         if (asistencia.fecha !== fecha) {
+          // Nuevo Día
           await AsyncStorage.removeItem("asistencia");
           setSalida(false);
           setEntrada(false);
@@ -142,41 +187,33 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const value = {
-    loanding,
+    Autentication,
+    Registrado,
     entrada,
     salida,
     fechaHoy,
+    loandingBtnEntrada,
+    loandingBtnFaltaI,
+    loandingBtnFaltaJ,
+    loandingBtnSalida,
+    loandingMain,
     mes,
+    user,
     horaLimite,
     asisteniciasAll,
+    crearUser,
+    iniciarSesion,
     createNewAsistencia,
     obtenerlistaAsistencias,
     registrarSalida,
+    cerrarSesion,
   };
 
   return (
     <AuthContext.Provider value={value}>
       {children}
 
-      {loandingMain && (
-        <View style={styles.overlay}>
-          <ActivityIndicator size="large" color="#34C759" />
-        </View>
-      )}
+      {loandingMain && <Loanding />}
     </AuthContext.Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 999,
-  },
-});

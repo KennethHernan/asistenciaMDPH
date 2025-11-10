@@ -1,5 +1,17 @@
-import { Redirect } from "expo-router";
-
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
 export default function Index() {
-  return <Redirect href="/Asistencia" />;
+  const { Autentication, loandingMain } = useAuth();
+  const router = useRouter();
+
+
+  useEffect(() => {
+    if (loandingMain) return;
+    if (Autentication) {
+      router.replace("/(tabs)/Asistencia");
+    } else {
+      router.replace("/Login/Login");
+    }
+  }, [Autentication, loandingMain]);
 }

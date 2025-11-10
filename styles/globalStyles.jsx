@@ -71,6 +71,24 @@ export const typography = {
 };
 
 export const globalStyles = StyleSheet.create({
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  loader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
   header: {
     padding: spacing.sm,
     marginTop: spacing.md,
@@ -79,6 +97,7 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    zIndex: 99,
   },
   container: {
     flex: 1,
@@ -123,16 +142,16 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: colors.secondary2,
   },
   buttonFaltaJustificada: {
-    backgroundColor: colors.secondary2
+    backgroundColor: colors.secondary2,
   },
   buttonFaltaInjustificada: {
-    backgroundColor: colors.danger
+    backgroundColor: colors.danger,
   },
   buttonFaltaJustificadaDisable: {
-    backgroundColor: colors.faltaJDisable
+    backgroundColor: colors.faltaJDisable,
   },
   buttonFaltaInjustificadaDisable: {
-    backgroundColor: colors.faltaIDisable
+    backgroundColor: colors.faltaIDisable,
   },
   buttonText: {
     ...typography.h3_5,
@@ -193,7 +212,7 @@ export const globalStyles = StyleSheet.create({
     textAlign: "center",
   },
   col5: {
-    flex: 2,
+    flex: 1,
     textAlign: "center",
   },
 });

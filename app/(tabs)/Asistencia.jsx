@@ -1,21 +1,23 @@
+import IconLoanding from "@/assets/icons/icon_loanding.svg";
+import IconTickets from "@/assets/icons/icon_tickets.svg";
+import ComponeteAsistencia from "@/components/componente-asistencia";
+import Header from "@/components/header";
+import { useAuth } from "@/context/AuthContext";
+import { colors, globalStyles, spacing } from "@/styles/globalStyles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import IconLoanding from "../assets/icons/icon_loanding.svg";
-import IconTickets from "../assets/icons/icon_tickets.svg";
-import { useAuth } from "../context/AuthContext";
-import { colors, globalStyles, spacing } from "../styles/globalStyles";
 
 export default function AsistenciaScreen() {
   const {
     createNewAsistencia,
-    loanding,
+    loandingBtnEntrada,
+    loandingBtnSalida,
     entrada,
     salida,
     registrarSalida,
@@ -42,45 +44,7 @@ export default function AsistenciaScreen() {
   return (
     <ScrollView style={globalStyles.container}>
       {/* Header */}
-      <View style={globalStyles.header}>
-        <View>
-          <Text style={globalStyles.title}>Marcación Asistencia</Text>
-          <View style={{ flexDirection: "row", gap: spacing.sm }}>
-            <Text style={[globalStyles.text, { fontWeight: "600" }]}>Mes:</Text>
-            <Text style={globalStyles.text}>{mes}</Text>
-          </View>
-        </View>
-
-        {/* Icono de Perfil */}
-        <View
-          style={{
-            width: 35,
-            height: 35,
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Image
-            source={require("../assets/images/usuario 1.png")}
-            style={{ width: 35, height: 35 }}
-          />
-          <View
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 50,
-              backgroundColor: "#34C759",
-              position: "absolute",
-              bottom: 0,
-              right: 2,
-              borderWidth: 2,
-              borderColor: colors.white,
-            }}
-          />
-        </View>
-      </View>
+      <Header title="Marcación Asistencia" />
 
       {/* Marcacion Asistencia */}
       <View style={globalStyles.card}>
@@ -94,9 +58,9 @@ export default function AsistenciaScreen() {
           Hoy {fechaHoy}
         </Text>
 
-        {/* Marcar asistencia */}
+        {/* Marcar Entrada */}
         <TouchableOpacity
-          disabled={loanding || entrada}
+          disabled={loandingBtnEntrada || entrada}
           onPress={() => createNewAsistencia()}
           style={[
             globalStyles.button,
@@ -104,7 +68,7 @@ export default function AsistenciaScreen() {
           ]}
           activeOpacity={0.8}
         >
-          {!loanding ? (
+          {!loandingBtnEntrada ? (
             <>
               <IconTickets />
               <Text style={globalStyles.buttonText}>Marcar Entrada</Text>
@@ -120,7 +84,7 @@ export default function AsistenciaScreen() {
 
         {/* Marcar Salida */}
         <TouchableOpacity
-          disabled={loanding || salida}
+          disabled={loandingBtnSalida || salida}
           onPress={() => registrarSalida()}
           style={[
             globalStyles.button,
@@ -129,7 +93,7 @@ export default function AsistenciaScreen() {
           ]}
           activeOpacity={0.8}
         >
-          {!loanding ? (
+          {!loandingBtnSalida ? (
             <>
               <IconTickets />
               <Text style={globalStyles.buttonText}>Marcar Salida</Text>
@@ -188,6 +152,9 @@ export default function AsistenciaScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Última Asistencia */}
+      <ComponeteAsistencia />
     </ScrollView>
   );
 }

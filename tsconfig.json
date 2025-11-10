@@ -13,6 +13,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts", "styles/globalStyles.jsx", "app/_layout.jsx", "app/Asistencia.jsx", "app/Dashboard.jsx", "app/Registro.jsx", "components/Providers.jsx",
+    "expo-env.d.ts", "styles/globalStyles.jsx", "app/_layout.jsx", "app/(tabs)/Asistencia.jsx", "app/(tabs)/Dashboard.jsx", "app/(tabs)/Registro.jsx", "components/Providers.jsx",
   ]
 }

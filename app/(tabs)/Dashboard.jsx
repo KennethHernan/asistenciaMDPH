@@ -1,9 +1,11 @@
-import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
+import IconFlechaDanger from "@/assets/icons/icon_flecha_danger.svg";
+import IconFlechaWarning from "@/assets/icons/icon_flecha_warning.svg";
+import ComponeteAsistencia from "@/components/componente-asistencia";
+import Header from "@/components/header";
+import { colors, globalStyles, spacing } from "@/styles/globalStyles";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { ScrollView } from "react-native-gesture-handler";
-import IconFlechaDanger from "../assets/icons/icon_flecha_danger.svg";
-import IconFlechaWarning from "../assets/icons/icon_flecha_warning.svg";
-import { colors, globalStyles, spacing } from "../styles/globalStyles";
 const screenWidth = Dimensions.get("window").width;
 const dataGrafico = [
   {
@@ -64,42 +66,7 @@ export default function DashboardScreen() {
   return (
     <ScrollView style={globalStyles.container}>
       {/* Header */}
-      <View style={globalStyles.header}>
-        <View>
-          <Text style={globalStyles.title}>Dashboard</Text>
-          <View style={{ flexDirection: "row", gap: spacing.sm }}>
-            <Text style={[globalStyles.text, { fontWeight: "600" }]}>Mes:</Text>
-            <Text style={globalStyles.text}>Setiembre</Text>
-          </View>
-        </View>
-
-        {/* Icono de Perfil */}
-        <View
-          style={{
-            width: 35,
-            height: 35,
-            position: "relative",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Image source={require("../assets/images/usuario 1.png")} style={{ width: 35, height: 35}} />
-          <View
-            style={{
-              width: 12,
-              height: 12,
-              borderRadius: 50,
-              backgroundColor: "#34C759",
-              position: "absolute",
-              bottom: 0,
-              right: 2,
-              borderWidth: 2,
-              borderColor: colors.white,
-            }}
-          />
-        </View>
-      </View>
+      <Header title="Dashboard" />
 
       {/* Grafico Tardanza */}
       <View style={globalStyles.card}>
@@ -298,69 +265,7 @@ export default function DashboardScreen() {
       </View>
 
       {/* Última Asistencia */}
-      <View style={globalStyles.card}>
-        <View>
-          <Text style={globalStyles.subtitle}>Última Asistencia</Text>
-        </View>
-        {/* Tabla */}
-        <View style={[globalStyles.table, { marginTop: spacing.sm }]}>
-          {/* Header */}
-          <View style={globalStyles.tableHeader}>
-            <Text style={[globalStyles.headerCell, globalStyles.col1]}>
-              Fecha
-            </Text>
-            <Text style={[globalStyles.headerCell, globalStyles.col2]}>
-              Día
-            </Text>
-            <Text style={[globalStyles.headerCell, globalStyles.col3]}>
-              Entrada
-            </Text>
-            <Text style={[globalStyles.headerCell, globalStyles.col4]}>
-              Salida
-            </Text>
-            <Text style={[globalStyles.headerCell, globalStyles.col5]}>
-              Estado
-            </Text>
-          </View>
-
-          {/* Rows */}
-          <ScrollView>
-            {dataGrafico.map((item) => (
-              <View key={item.id} style={globalStyles.tableBody}>
-                <Text style={[globalStyles.bodyCell, globalStyles.col1]}>
-                  {item.fecha}
-                </Text>
-                <Text style={[globalStyles.bodyCell, globalStyles.col2]}>
-                  {item.dia}
-                </Text>
-                <Text style={[globalStyles.bodyCell, globalStyles.col3]}>
-                  {item.entrada}
-                </Text>
-                <Text style={[globalStyles.bodyCell, globalStyles.col4]}>
-                  {item.salida}
-                </Text>
-                <Text
-                  style={[
-                    globalStyles.bodyCell,
-                    globalStyles.col5,
-                    {
-                      fontWeight: "600",
-                      color:
-                        item.estado === "Puntual"
-                          ? colors.secondary
-                          : item.estado === "Falta"
-                          ? colors.danger
-                          : colors.warning,
-                    },
-                  ]}
-                >
-                  {item.estado}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-      </View>
+      <ComponeteAsistencia />
     </ScrollView>
   );
 }
