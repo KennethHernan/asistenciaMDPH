@@ -4,9 +4,11 @@ import Icon_Dashboard from "@/assets/icons/icon_dashboard.svg";
 import Icon_Dashboard_Active from "@/assets/icons/icon_dashboard_active.svg";
 import Icon_Registro from "@/assets/icons/icon_registro.svg";
 import Icon_Registro_Active from "@/assets/icons/icon_registro_active.svg";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Tabs } from "expo-router";
 export default function RootLayout() {
   return (
+    <ProtectedRoute >
     <Tabs
       screenOptions={{
         headerShown: false, // Barra superior visible
@@ -20,15 +22,6 @@ export default function RootLayout() {
         },
       }}
     >
-      {/* Pestaña INDEX */}
-      <Tabs.Screen name="index" options={{ href: null }} />
-
-      {/* Pestaña LOGIN */}
-      <Tabs.Screen name="index" options={{ href: null }} />
-
-      {/* Pestaña REGISTER */}
-      <Tabs.Screen name="index" options={{ href: null }} />
-
       {/* Pestaña DASHBOARD */}
       <Tabs.Screen
         name="Dashboard"
@@ -58,5 +51,6 @@ export default function RootLayout() {
         }}
       />
     </Tabs>
+    </ ProtectedRoute>
   );
 }

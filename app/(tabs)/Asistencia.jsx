@@ -1,5 +1,4 @@
 import IconLoanding from "@/assets/icons/icon_loanding.svg";
-import IconTickets from "@/assets/icons/icon_tickets.svg";
 import ComponeteAsistencia from "@/components/componente-asistencia";
 import Header from "@/components/header";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +9,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 export default function AsistenciaScreen() {
@@ -70,8 +69,7 @@ export default function AsistenciaScreen() {
         >
           {!loandingBtnEntrada ? (
             <>
-              <IconTickets />
-              <Text style={globalStyles.buttonText}>Marcar Entrada</Text>
+              <Text style={globalStyles.buttonText}>Marcar entrada</Text>
             </>
           ) : (
             <Animated.View
@@ -84,7 +82,7 @@ export default function AsistenciaScreen() {
 
         {/* Marcar Salida */}
         <TouchableOpacity
-          disabled={loandingBtnSalida || salida}
+          disabled={loandingBtnSalida || !salida}
           onPress={() => registrarSalida()}
           style={[
             globalStyles.button,
@@ -95,8 +93,7 @@ export default function AsistenciaScreen() {
         >
           {!loandingBtnSalida ? (
             <>
-              <IconTickets />
-              <Text style={globalStyles.buttonText}>Marcar Salida</Text>
+              <Text style={globalStyles.buttonText}>Marcar salida</Text>
             </>
           ) : (
             <Animated.View
@@ -106,6 +103,10 @@ export default function AsistenciaScreen() {
             </Animated.View>
           )}
         </TouchableOpacity>
+        <Text style={globalStyles.textInfo}>
+          Al no marcar la entrada hasta las 09:00 am, automaticamente se
+          regitrará como Falta Injustificada.
+        </Text>
       </View>
 
       {/* Marcacion Falta */}
@@ -124,21 +125,24 @@ export default function AsistenciaScreen() {
         <TouchableOpacity
           disabled={entrada}
           style={[
-            globalStyles.button,
+            globalStyles.button2,
             entrada
               ? globalStyles.buttonFaltaJustificadaDisable
               : globalStyles.buttonFaltaJustificada,
           ]}
           activeOpacity={0.8}
         >
-          <IconTickets />
-          <Text style={globalStyles.buttonText}>Marcar Falta Justificada</Text>
+          <Text
+            style={[globalStyles.buttonText2, { color: colors.secondary2 }]}
+          >
+            Marcar falta justificada
+          </Text>
         </TouchableOpacity>
         {/* Marcar Falta Injustificada */}
         <TouchableOpacity
           disabled={entrada}
           style={[
-            globalStyles.button,
+            globalStyles.button2,
             entrada
               ? globalStyles.buttonFaltaInjustificadaDisable
               : globalStyles.buttonFaltaInjustificada,
@@ -146,11 +150,14 @@ export default function AsistenciaScreen() {
           ]}
           activeOpacity={0.8}
         >
-          <IconTickets />
-          <Text style={globalStyles.buttonText}>
-            Marcar Falta Injustificada
+          <Text style={[globalStyles.buttonText2, { color: colors.danger }]}>
+            Marcar falta injustificada
           </Text>
         </TouchableOpacity>
+        <Text style={globalStyles.textInfo}>
+          Cada Falta Injustificada es 1 día de descuento. Y faltas
+          consecutivamente afectara su estabilidad en el trabajo.
+        </Text>
       </View>
 
       {/* Última Asistencia */}

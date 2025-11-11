@@ -69,12 +69,14 @@ export default function TablaAsistencia() {
                       globalStyles.bodyCell,
                       globalStyles.col5,
                       {
-                        fontWeight: "600",
+                        fontWeight: "100",
                         color:
                           new Date(item.horaEntrada).toLocaleTimeString(
                             "es-PE",
                             {
-                              hour12: true,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
                             }
                           ) < horaLimite
                             ? colors.secondary
@@ -87,7 +89,9 @@ export default function TablaAsistencia() {
                         {new Date(item.horaEntrada).toLocaleTimeString(
                           "es-PE",
                           {
-                            hour12: true,
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
                           }
                         ) > horaLimite
                           ? Tardanza

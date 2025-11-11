@@ -30,13 +30,19 @@ export default function LoginScreen() {
     switch (result.code) {
       case "auth/email-already-in-use":
         console.log("hola");
-        
-        return setErrorEmail("El correo electrónico ingresado ya está en uso.");
+        setErrorEmail(true);
+        return setError("El correo electrónico ingresado ya está en uso.");
       case "auth/invalid-email":
-        return setErrorEmail("El correo electrónico no es válido.");
+        setErrorEmail(true);
+        return setError("El correo electrónico no es válido.");
       case "auth/weak-password":
-        return setErrorContraseña("La contraseña es muy débil. Usa al menos 6 caracteres.");
+        setErrorContraseña(true);
+        return setError(
+          "La contraseña es muy débil. Usa al menos 6 caracteres."
+        );
       default:
+        setErrorEmail(true);
+        setErrorContraseña(true);
         return setError("Ocurrió un error al registrar el usuario.");
     }
   };
@@ -46,15 +52,21 @@ export default function LoginScreen() {
       <Text style={styles.title}>Registrar Cuenta</Text>
 
       <TextInput
-        style={globalStyles.input}
+        style={[
+          globalStyles.input,
+          errorEmail && error ? globalStyles.inputError : "",
+        ]}
         placeholder="Correo electrónico"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
-        backgroundColor={errorEmail && "#ff0000ff"}
+        borer
       />
       <TextInput
-        style={globalStyles.input}
+        style={[
+          globalStyles.input,
+          errorContraseña && error ? globalStyles.inputError : "",
+        ]}
         placeholder="Contraseña"
         value={password}
         onChangeText={setPassword}
@@ -62,10 +74,12 @@ export default function LoginScreen() {
       />
 
       <Button
+        style={globalStyles.Button}
         title={loading ? "Ingresando..." : "Entrar"}
         onPress={handleRegister}
       />
-      {errorEmail || error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>}
+
       <Text
         style={styles.registerText}
         onPress={() => router.push("/Login/Login")}

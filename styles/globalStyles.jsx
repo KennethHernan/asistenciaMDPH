@@ -52,6 +52,10 @@ export const typography = {
     fontSize: 13,
     fontWeight: "400",
   },
+  h4: {
+    fontSize: 11,
+    fontWeight: "400",
+  },
   textHeaderTable: {
     fontSize: 13,
     fontWeight: "500",
@@ -121,7 +125,7 @@ export const globalStyles = StyleSheet.create({
   button: {
     borderRadius: 12,
     paddingHorizontal: spacing.lg,
-    paddingVertical: 13,
+    paddingVertical: 20,
     marginTop: spacing.md,
     display: "flex",
     flexDirection: "row",
@@ -129,33 +133,58 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  
+  button2: {
+    borderRadius: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 10,
+    marginTop: spacing.md,
+    display: "flex",
+    flexDirection: "row",
+    gap: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+  },
+  buttonText: {
+    ...typography.h3_5,
+    color: colors.white,
+  },
+  buttonText2: {
+    ...typography.h3,
+  },
   buttonPrimary: {
     backgroundColor: colors.primary,
   },
   buttonPrimary2: {
     backgroundColor: colors.primary2,
   },
+  buttonSalida: {
+    backgroundColor: colors.white,
+    borderBottomWidth:1,
+  },
   buttonDanger: {
     backgroundColor: colors.danger,
   },
   buttonWarning: {
-    backgroundColor: colors.secondary2,
+    backgroundColor: colors.white,
+    borderColor: colors.secondary2,
   },
   buttonFaltaJustificada: {
-    backgroundColor: colors.secondary2,
+    backgroundColor: colors.white,
+    borderColor: colors.secondary2,
   },
   buttonFaltaInjustificada: {
-    backgroundColor: colors.danger,
+    backgroundColor: colors.white,
+    borderColor: colors.danger,
   },
   buttonFaltaJustificadaDisable: {
-    backgroundColor: colors.faltaJDisable,
+    backgroundColor: colors.white,
+    borderColor: colors.faltaJDisable,
   },
   buttonFaltaInjustificadaDisable: {
-    backgroundColor: colors.faltaIDisable,
-  },
-  buttonText: {
-    ...typography.h3_5,
-    color: colors.white,
+    backgroundColor: colors.white,
+    borderColor: colors.faltaIDisable,
   },
   title: {
     ...typography.h1,
@@ -168,6 +197,16 @@ export const globalStyles = StyleSheet.create({
   text: {
     ...typography.h3,
   },
+  textInfo: {
+    ...typography.h4,
+    textAlign: "center",
+    marginVertical: 7,
+    color: colors.text_plomo,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: "red",
+  },
   table: {
     backgroundColor: colors.white,
     borderRadius: 12,
@@ -178,7 +217,7 @@ export const globalStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
+    borderColor: colors.gray[200],
   },
   headerCell: {
     color: colors.text_dark,

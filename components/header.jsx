@@ -1,9 +1,16 @@
 import { useAuth } from "@/context/AuthContext";
-import { Image, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { colors, globalStyles, spacing } from "../styles/globalStyles";
 
 export default function Header({ title }) {
   const { mes, cerrarSesion } = useAuth();
+  const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    setModal(false);
+  }, []);
+
   return (
     <View style={globalStyles.header}>
       <View>
@@ -15,8 +22,8 @@ export default function Header({ title }) {
       </View>
 
       {/* Icono de Perfil */}
-      <View
-        onPress={() => cerrarSesion()}
+      <TouchableOpacity
+        onPress={() => setModal(true)}
         style={{
           width: 35,
           height: 35,
@@ -43,39 +50,63 @@ export default function Header({ title }) {
             borderColor: colors.white,
           }}
         />
+      </TouchableOpacity>
+      {modal && (
+        <>
+          <TouchableOpacity
+            onPress={() => setModal(false)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 999,
+            }}
+            activeOpacity={1}
+          />
 
-        <View
-          style={{
-            width: 150,
-            padding: 10,
-            height: "auto",
-            borderRadius: 10,
-            backgroundColor: "#ffffff13",
-            position: "absolute",
-            bottom: -75,
-            gap: 10,
-            right: 2,
-            shadowColor: "#000",
-            shadowOffset: { width: 1, height: 1 },
-            shadowOpacity: 0.08,
-            shadowRadius: 10,
-            elevation: 10,
-          }}
-        >
-          <Text
-            onPress={() => cerrarSesion()}
-            style={[globalStyles.text, { fontWeight: "600" }]}
+          {/* Menú */}
+          <View
+            style={{
+              width: 150,
+              padding: 15,
+              height: "auto",
+              borderRadius: 10,
+              backgroundColor: "#ffffff",
+              position: "absolute",
+              bottom: -75,
+              gap: 15,
+              right: 2,
+              shadowColor: "#000",
+              shadowOffset: { width: 1, height: 1 },
+              shadowOpacity: 0.08,
+              shadowRadius: 10,
+              elevation: 10,
+              zIndex: 1000,
+            }}
           >
-            Cerrar Sesión
-          </Text>
-          <Text
-            onPress={() => router.push("/Register")}
-            style={[globalStyles.text, { fontWeight: "600" }]}
-          >
-            Perfil
-          </Text>
-        </View>
-      </View>
+            <Text
+              onPress={() => {
+                cerrarSesion();
+                setModal(false);
+              }}
+              style={[globalStyles.text, { fontWeight: "600" }]}
+            >
+              Cerrar Sesión
+            </Text>
+            <Text
+              onPress={() => {
+                setModal(false);
+                router.push("/Register");
+              }}
+              style={[globalStyles.text, { fontWeight: "600" }]}
+            >
+              Perfil
+            </Text>
+          </View>
+        </>
+      )}
     </View>
   );
 }

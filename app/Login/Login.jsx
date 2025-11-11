@@ -4,11 +4,14 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 export default function LoginScreen() {
-  const { iniciarSesion, crearUser,  Autentication } = useAuth();
+  const { iniciarSesion, Autentication } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
+  const [errorContraseña, setErrorContraseña] = useState("");
 
   useEffect(() => {
     if (Autentication) {
@@ -17,19 +20,39 @@ export default function LoginScreen() {
   }, [Autentication]);
 
   const handleLogin = async () => {
+    setErrorEmail(false);
+    setErrorContraseña(false);
+    setError("");
     if (!email || !password) {
+      setErrorEmail(true);
+      setErrorContraseña(true);
       Alert.alert("Error", "Por favor ingresa tu correo y contraseña.");
       return;
     }
+    setLoading(true);
 
-    try {
-      setLoading(true);
-      await iniciarSesion(email, password);
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error de inicio de sesión", error.message);
-    } finally {
-      setLoading(false);
+    const response = await iniciarSesion(email, password);
+    if (!response.code) return;
+    switch (response.code) {
+      case "auth/invalid-email":
+        setErrorEmail(true);
+        setLoading(false);
+        return setError("El formato del correo es inválido.");
+      case "auth/user-not-found":
+        setErrorEmail(true);
+        setLoading(false);
+        return setError("No existe una cuenta con este correo.");
+      case "auth/wrong-password":
+        setErrorContraseña(true);
+        setLoading(false);
+        return setError("La contraseña es incorrecta.");
+      case "auth/too-many-requests":
+        return setError("Demasiados intentos fallidos. Intenta más tarde.");
+      default:
+        setErrorEmail(true);
+        setErrorContraseña(true);
+        setLoading(false);
+        return setError("Ocurrió un error al Iniciar Sesión");
     }
   };
 
@@ -38,14 +61,20 @@ export default function LoginScreen() {
       <Text style={styles.title}>Iniciar Sesión</Text>
 
       <TextInput
-        style={globalStyles.input}
+        style={[
+          globalStyles.input,
+          errorEmail && error ? globalStyles.inputError : "",
+        ]}
         placeholder="Correo electrónico"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
-        style={globalStyles.input}
+        style={[
+          globalStyles.input,
+          errorContraseña && error ? globalStyles.inputError : "",
+        ]}
         placeholder="Contraseña"
         value={password}
         onChangeText={setPassword}
@@ -56,6 +85,8 @@ export default function LoginScreen() {
         title={loading ? "Ingresando..." : "Entrar"}
         onPress={handleLogin}
       />
+
+      {error && <Text style={styles.errorText}>{error}</Text>}
 
       <Text
         style={styles.registerText}
@@ -84,5 +115,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "blue",
     marginTop: 10,
+  },
+  errorText: {
+    fontSize: 12,
+    textAlign: "center",
+    color: "red",
+    marginTop: 3,
   },
 });

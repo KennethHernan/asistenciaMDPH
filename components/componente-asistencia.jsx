@@ -6,8 +6,7 @@ import { ScrollView, Text, View } from "react-native";
 import { colors, globalStyles } from "../styles/globalStyles";
 
 export default function ComponeteAsistencia() {
-  const { asisteniciasAll, obtenerlistaAsistencias, mes, horaLimite } =
-    useAuth();
+  const { asisteniciasAll, obtenerlistaAsistencias, horaLimite } = useAuth();
   const Tardanza = "◉";
   const Puntual = "◉";
   const Falta = "◉";
@@ -84,12 +83,14 @@ export default function ComponeteAsistencia() {
                       globalStyles.bodyCell,
                       globalStyles.col5,
                       {
-                        fontWeight: "600",
+                        fontWeight: "100",
                         color:
                           new Date(item.horaEntrada).toLocaleTimeString(
                             "es-PE",
                             {
-                              hour12: true,
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
                             }
                           ) < horaLimite
                             ? colors.secondary
@@ -102,7 +103,9 @@ export default function ComponeteAsistencia() {
                         {new Date(item.horaEntrada).toLocaleTimeString(
                           "es-PE",
                           {
-                            hour12: true,
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
                           }
                         ) > horaLimite
                           ? Tardanza
