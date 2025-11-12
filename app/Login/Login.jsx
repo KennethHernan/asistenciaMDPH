@@ -23,36 +23,39 @@ export default function LoginScreen() {
     setErrorEmail(false);
     setErrorContraseña(false);
     setError("");
+
     if (!email || !password) {
       setErrorEmail(true);
       setErrorContraseña(true);
       Alert.alert("Error", "Por favor ingresa tu correo y contraseña.");
       return;
     }
+
     setLoading(true);
 
-    const response = await iniciarSesion(email, password);
-    if (!response.code) return;
-    switch (response.code) {
-      case "auth/invalid-email":
-        setErrorEmail(true);
-        setLoading(false);
-        return setError("El formato del correo es inválido.");
-      case "auth/user-not-found":
-        setErrorEmail(true);
-        setLoading(false);
-        return setError("No existe una cuenta con este correo.");
-      case "auth/wrong-password":
-        setErrorContraseña(true);
-        setLoading(false);
-        return setError("La contraseña es incorrecta.");
-      case "auth/too-many-requests":
-        return setError("Demasiados intentos fallidos. Intenta más tarde.");
-      default:
-        setErrorEmail(true);
-        setErrorContraseña(true);
-        setLoading(false);
-        return setError("Ocurrió un error al Iniciar Sesión");
+    try {
+      const response = await iniciarSesion(email, password);
+      if (!response.code) return;
+      switch (response.code) {
+        case "auth/invalid-email":
+          setErrorEmail(true);
+          return setError("El formato del correo es inválido.");
+        case "auth/user-not-found":
+          setErrorEmail(true);
+          return setError("No existe una cuenta con este correo.");
+        case "auth/wrong-password":
+          setErrorContraseña(true);
+          return setError("La contraseña es incorrecta.");
+        case "auth/too-many-requests":
+          setErrorEmail(true);
+          setErrorContraseña(true);
+          return setError("Demasiados intentos fallidos. Intenta más tarde.");
+            }
+    } catch (err) {
+      console.log(err);
+      setError("Error inesperado al iniciar sesión.");
+    } finally {
+      setLoading(false);
     }
   };
 

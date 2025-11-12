@@ -4,7 +4,6 @@ import { capturarDia, capturarFecha, capturarMes } from "@/service/fechaHoy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -23,8 +22,8 @@ export const AuthProvider = ({ children }) => {
   const [loandingBtnFaltaJ, setLoandingBtnFaltaJ] = useState(false);
   const [loandingBtnFaltaI, setLoandingBtnFaltaI] = useState(false);
   const [loandingMain, setLoandingMain] = useState(true);
-  const [entrada, setEntrada] = useState(false);
-  const [salida, setSalida] = useState(false);
+  const [entradaDisable, setEntrada] = useState(false);
+  const [salidaDisable, setSalida] = useState(false);
   const [newDia, setNewdia] = useState(false);
   const [asisteniciasAll, setAsistencias] = useState(false);
   const [Autentication, setAutentication] = useState(false);
@@ -32,14 +31,6 @@ export const AuthProvider = ({ children }) => {
   const [fechaHoy, setFechaHoy] = useState("");
   const [mes, setMes] = useState("");
   const [horaLimite, setHoraLimite] = useState("08:45:00 a. m.");
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setAutentication(!!user);
-      setUser(user);
-    });
-    return unsubscribe;
-  }, []);
 
   const crearUser = async (email, password) => {
     try {
@@ -69,10 +60,20 @@ export const AuthProvider = ({ children }) => {
   const iniciarSesion = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      cambiarAutenticacionStorage(true);
       setAutentication(true);
+      setSalida(true)
+      const asistencia = {
+        asistenciaId: "",
+        entrada: false,
+        salida: false,
+        autentication: true,
+        fecha: fechaHoy,
+      };
+      await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       return;
     } catch (error) {
+      console.log("erorr:",error);
+      
       return error;
     }
   };
@@ -91,14 +92,7 @@ export const AuthProvider = ({ children }) => {
         dia: diaHoy,
         fecha: fechaHoy,
       });
-      const asistencia = {
-        asistenciaId: asistenId,
-        entrada: true,
-        salida: false,
-        autentication: false,
-        fecha: fechaHoy,
-      };
-      await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
+      cambiarStorage(asistenId, true, false, true, fechaHoy);
       setEntrada(true);
       setLoandingBtnEntrada(false);
       return;
@@ -135,13 +129,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const cambiarAutenticacionStorage = async (valor) => {
+  const cambiarStorage = async (
+    asistenId,
+    entrada,
+    salida,
+    autentication,
+    fechaHoy
+  ) => {
     try {
       const data = await AsyncStorage.getItem("asistencia");
 
       if (data) {
         const asistencia = JSON.parse(data);
-        asistencia.autentication = valor;
+        asistencia.asistenciaId = asistenId;
+        asistencia.entrada = entrada;
+        asistencia.salida = salida;
+        asistencia.autentication = autentication;
+        asistencia.fecha = fechaHoy;
         await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       }
     } catch (error) {
@@ -185,7 +189,10 @@ export const AuthProvider = ({ children }) => {
 
         if (asistencia.fecha !== fecha) {
           // Nuevo Día
-          await AsyncStorage.removeItem("asistencia");
+          asistencia.entrada = false;
+          asistencia.salida = false;
+          asistencia.fechaHoy = fechaHoy;
+          await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
           setSalida(false);
           setEntrada(false);
           return;
@@ -219,8 +226,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     Autentication,
     Registrado,
-    entrada,
-    salida,
+    entradaDisable,
+    salidaDisable,
     fechaHoy,
     loandingBtnEntrada,
     loandingBtnFaltaI,

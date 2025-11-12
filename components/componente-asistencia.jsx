@@ -83,7 +83,7 @@ export default function ComponeteAsistencia() {
                       globalStyles.bodyCell,
                       globalStyles.col5,
                       {
-                        fontWeight: "100",
+                        fontWeight: "600",
                         color:
                           new Date(item.horaEntrada).toLocaleTimeString(
                             "es-PE",

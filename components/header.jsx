@@ -98,7 +98,6 @@ export default function Header({ title }) {
             <Text
               onPress={() => {
                 setModal(false);
-                router.push("/Register");
               }}
               style={[globalStyles.text, { fontWeight: "600" }]}
             >

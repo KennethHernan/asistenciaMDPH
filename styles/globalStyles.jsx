@@ -76,11 +76,15 @@ export const typography = {
 
 export const globalStyles = StyleSheet.create({
   input: {
+    color: colors.text_plomo,
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 12,
     borderRadius: 10,
     marginBottom: 15,
+    selectionColor: "#373737ff",
+    underlineColorAndroid: "none",
+    outlineStyle: "none"
   },
   loader: {
     position: "absolute",
@@ -133,7 +137,7 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  
+
   button2: {
     borderRadius: 12,
     paddingHorizontal: spacing.lg,
@@ -161,7 +165,7 @@ export const globalStyles = StyleSheet.create({
   },
   buttonSalida: {
     backgroundColor: colors.white,
-    borderBottomWidth:1,
+    borderBottomWidth: 1,
   },
   buttonDanger: {
     backgroundColor: colors.danger,

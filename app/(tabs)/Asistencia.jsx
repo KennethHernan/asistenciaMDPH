@@ -17,8 +17,8 @@ export default function AsistenciaScreen() {
     createNewAsistencia,
     loandingBtnEntrada,
     loandingBtnSalida,
-    entrada,
-    salida,
+    entradaDisable,
+    salidaDisable,
     registrarSalida,
     fechaHoy,
     mes,
@@ -59,11 +59,11 @@ export default function AsistenciaScreen() {
 
         {/* Marcar Entrada */}
         <TouchableOpacity
-          disabled={loandingBtnEntrada || entrada}
+          disabled={loandingBtnEntrada || entradaDisable}
           onPress={() => createNewAsistencia()}
           style={[
             globalStyles.button,
-            entrada ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
+            entradaDisable ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
           ]}
           activeOpacity={0.8}
         >
@@ -82,11 +82,11 @@ export default function AsistenciaScreen() {
 
         {/* Marcar Salida */}
         <TouchableOpacity
-          disabled={loandingBtnSalida || !salida}
+          disabled={loandingBtnSalida || !salidaDisable}
           onPress={() => registrarSalida()}
           style={[
             globalStyles.button,
-            salida ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
+            salidaDisable ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
             { marginBottom: spacing.sm },
           ]}
           activeOpacity={0.8}
@@ -123,10 +123,10 @@ export default function AsistenciaScreen() {
 
         {/* Marcación Falta*/}
         <TouchableOpacity
-          disabled={entrada}
+          disabled={entradaDisable}
           style={[
             globalStyles.button2,
-            entrada
+            entradaDisable
               ? globalStyles.buttonFaltaJustificadaDisable
               : globalStyles.buttonFaltaJustificada,
           ]}
@@ -140,10 +140,10 @@ export default function AsistenciaScreen() {
         </TouchableOpacity>
         {/* Marcar Falta Injustificada */}
         <TouchableOpacity
-          disabled={entrada}
+          disabled={entradaDisable}
           style={[
             globalStyles.button2,
-            entrada
+            entradaDisable
               ? globalStyles.buttonFaltaInjustificadaDisable
               : globalStyles.buttonFaltaInjustificada,
             { marginBottom: spacing.sm },

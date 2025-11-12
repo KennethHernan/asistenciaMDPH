@@ -4,11 +4,18 @@ import Icon_Dashboard from "@/assets/icons/icon_dashboard.svg";
 import Icon_Dashboard_Active from "@/assets/icons/icon_dashboard_active.svg";
 import Icon_Registro from "@/assets/icons/icon_registro.svg";
 import Icon_Registro_Active from "@/assets/icons/icon_registro_active.svg";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { Tabs } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { Redirect, Tabs } from "expo-router";
+
 export default function RootLayout() {
+  const { Autentication, loandingMain } = useAuth();
+  if (loandingMain) return;
+
+  if (!Autentication && !loandingMain) {
+    return <Redirect href="/Login/Login" />;
+  }
+
   return (
-    <ProtectedRoute >
     <Tabs
       screenOptions={{
         headerShown: false, // Barra superior visible
@@ -51,6 +58,5 @@ export default function RootLayout() {
         }}
       />
     </Tabs>
-    </ ProtectedRoute>
   );
 }
