@@ -21,7 +21,6 @@ export default function AsistenciaScreen() {
     salidaDisable,
     registrarSalida,
     fechaHoy,
-    mes,
   } = useAuth();
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -73,7 +72,7 @@ export default function AsistenciaScreen() {
             </>
           ) : (
             <Animated.View
-              style={{ transform: [{ rotate: spin }], marginVertical: 6 }}
+              style={{ transform: [{ rotate: spin }], marginVertical: 1.5 }}
             >
               <IconLoanding style={globalStyles.loading} />
             </Animated.View>
@@ -82,7 +81,7 @@ export default function AsistenciaScreen() {
 
         {/* Marcar Salida */}
         <TouchableOpacity
-          disabled={loandingBtnSalida || !salidaDisable}
+          disabled={loandingBtnSalida || salidaDisable}
           onPress={() => registrarSalida()}
           style={[
             globalStyles.button,
@@ -97,7 +96,7 @@ export default function AsistenciaScreen() {
             </>
           ) : (
             <Animated.View
-              style={{ transform: [{ rotate: spin }], marginVertical: 6 }}
+              style={{ transform: [{ rotate: spin }], marginVertical: 1.5 }}
             >
               <IconLoanding style={globalStyles.loading} />
             </Animated.View>

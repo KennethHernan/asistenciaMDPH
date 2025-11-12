@@ -6,6 +6,7 @@ import Icon_Registro from "@/assets/icons/icon_registro.svg";
 import Icon_Registro_Active from "@/assets/icons/icon_registro_active.svg";
 import { useAuth } from "@/context/AuthContext";
 import { Redirect, Tabs } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const { Autentication, loandingMain } = useAuth();
@@ -16,47 +17,50 @@ export default function RootLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false, // Barra superior visible
-        tabBarShowLabel: false, // Ocultar etiquetas de las pestañas
-        tabBarStyle: {
-          backgroundColor: "#FAFAFA", // Color de fondo de la barra de pestañas
-          borderTopColor: "#ffffffff", // Color del borde superior de la barra de pestañas
-          height: 60,
-          paddingTop: 8,
-          paddingBottom: 8,
-        },
-      }}
-    >
-      {/* Pestaña DASHBOARD */}
-      <Tabs.Screen
-        name="Dashboard"
-        options={{
-          title: "Dashboard",
-          tabBarIcon: ({ focused }) =>
-            focused ? <Icon_Dashboard_Active /> : <Icon_Dashboard />,
+    <>
+      <StatusBar style="light" backgroundColor="#1e1e1e" />
+      <Tabs
+        screenOptions={{
+          headerShown: false, // Barra superior visible
+          tabBarShowLabel: false, // Ocultar etiquetas de las pestañas
+          tabBarStyle: {
+            backgroundColor: "#FAFAFA", // Color de fondo de la barra de pestañas
+            borderTopColor: "#ffffffff", // Color del borde superior de la barra de pestañas
+            height: 60,
+            paddingTop: 8,
+            paddingBottom: 8,
+          },
         }}
-      />
-      {/* Pestaña Asistencia */}
-      <Tabs.Screen
-        name="Asistencia"
-        options={{
-          title: "Asistencia",
-          tabBarIcon: ({ focused }) =>
-            focused ? <Icon_Asistencia_Active /> : <Icon_Asistencia />,
-        }}
-      />
+      >
+        {/* Pestaña DASHBOARD */}
+        <Tabs.Screen
+          name="Dashboard"
+          options={{
+            title: "Dashboard",
+            tabBarIcon: ({ focused }) =>
+              focused ? <Icon_Dashboard_Active /> : <Icon_Dashboard />,
+          }}
+        />
+        {/* Pestaña Asistencia */}
+        <Tabs.Screen
+          name="Asistencia"
+          options={{
+            title: "Asistencia",
+            tabBarIcon: ({ focused }) =>
+              focused ? <Icon_Asistencia_Active /> : <Icon_Asistencia />,
+          }}
+        />
 
-      {/* Pestaña Registro */}
-      <Tabs.Screen
-        name="Registro"
-        options={{
-          title: "Registro",
-          tabBarIcon: ({ focused }) =>
-            focused ? <Icon_Registro_Active /> : <Icon_Registro />,
-        }}
-      />
-    </Tabs>
+        {/* Pestaña Registro */}
+        <Tabs.Screen
+          name="Registro"
+          options={{
+            title: "Registro",
+            tabBarIcon: ({ focused }) =>
+              focused ? <Icon_Registro_Active /> : <Icon_Registro />,
+          }}
+        />
+      </Tabs>
+    </>
   );
 }

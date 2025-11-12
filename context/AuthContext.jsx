@@ -2,6 +2,7 @@ import Loanding from "@/components/loanding";
 import { auth, db } from "@/firebase/firebaseConfig";
 import { capturarDia, capturarFecha, capturarMes } from "@/service/fechaHoy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { differenceInCalendarDays, getDaysInMonth } from "date-fns";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,6 +12,7 @@ import { child, get, ref, set, update } from "firebase/database";
 import { createContext, useContext, useEffect, useState } from "react";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const [loandingBtnFaltaI, setLoandingBtnFaltaI] = useState(false);
   const [loandingMain, setLoandingMain] = useState(true);
   const [entradaDisable, setEntrada] = useState(false);
-  const [salidaDisable, setSalida] = useState(false);
+  const [salidaDisable, setSalida] = useState(true);
   const [newDia, setNewdia] = useState(false);
   const [asisteniciasAll, setAsistencias] = useState(false);
   const [Autentication, setAutentication] = useState(false);
@@ -31,6 +33,12 @@ export const AuthProvider = ({ children }) => {
   const [fechaHoy, setFechaHoy] = useState("");
   const [mes, setMes] = useState("");
   const [horaLimite, setHoraLimite] = useState("08:45:00 a. m.");
+  const [textoTiempo, setTextoTiempo] = useState("");
+  const [conteo, setConteo] = useState({
+    puntual: 0,
+    tardanza: 0,
+    falta: 0,
+  });
 
   const crearUser = async (email, password) => {
     try {
@@ -61,25 +69,25 @@ export const AuthProvider = ({ children }) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setAutentication(true);
-      setSalida(true)
+      setSalida(true);
       const asistencia = {
         asistenciaId: "",
         entrada: false,
-        salida: false,
+        salida: true,
         autentication: true,
         fecha: fechaHoy,
       };
       await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       return;
     } catch (error) {
-      console.log("erorr:",error);
-      
       return error;
     }
   };
 
   const createNewAsistencia = async () => {
-    if (salida) return;
+    console.log("salidaDisable:", salidaDisable);
+    if (entradaDisable) return;
+    console.log("HOLA");
     setLoandingBtnEntrada(true);
     try {
       const asistenId = uuidv4();
@@ -94,7 +102,9 @@ export const AuthProvider = ({ children }) => {
       });
       cambiarStorage(asistenId, true, false, true, fechaHoy);
       setEntrada(true);
+      setSalida(false);
       setLoandingBtnEntrada(false);
+      obtenerlistaAsistencias();
       return;
     } catch (error) {
       setLoandingBtnEntrada(false);
@@ -104,7 +114,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const registrarSalida = async () => {
-    if (!entrada) return;
+    if (!entradaDisable) return;
 
     setLoandingBtnSalida(true);
 
@@ -122,6 +132,7 @@ export const AuthProvider = ({ children }) => {
       }
       setSalida(true);
       setLoandingBtnSalida(false);
+      obtenerlistaAsistencias();
     } catch (error) {
       setLoandingBtnSalida(false);
       console.error("Error al crear la asistencia:", error);
@@ -175,8 +186,6 @@ export const AuthProvider = ({ children }) => {
       setAsistencias(data);
     } catch (error) {
       console.error("Error al cargar asistencias:", error);
-    } finally {
-      setLoandingMain(false);
     }
   };
 
@@ -197,21 +206,123 @@ export const AuthProvider = ({ children }) => {
           setEntrada(false);
           return;
         }
-        if (asistencia.salida) {
-          setSalida(true);
-          setEntrada(true);
-        } else if (asistencia.entrada) {
-          setEntrada(true);
-          setSalida(false);
-        }
-        if (asistencia.autentication) {
-          setAutentication(true);
-        }
+
+        setAutentication(asistencia.autentication);
+        setEntrada(asistencia.entrada);
+        setSalida(asistencia.salida);
       }
     } catch (error) {
       console.error("Error al capturar asistencia:", error);
     }
   }
+
+  // Compara fecha actual
+  const compararFecha = () => {
+    const hoy = new Date();
+    if (asisteniciasAll.length > 0) {
+      const ultima = asisteniciasAll.reduce((a, b) =>
+        new Date(a.horaEntrada) > new Date(b.horaEntrada) ? a : b
+      );
+
+      const fechaAsistencia = new Date(ultima.horaEntrada);
+
+      const diff = differenceInCalendarDays(hoy, fechaAsistencia);
+      if (diff === 0) setTextoTiempo("hoy");
+      else if (diff === 1) setTextoTiempo("hace 1 día");
+      else if (diff === 2) setTextoTiempo("hace 2 días");
+      else setTextoTiempo(`hace ${diff} días`);
+      console.log("Date");
+    }
+    setLoandingMain(false);
+  };
+
+  // Grafico Evalución
+  const generarDatosAsistencia = () => {
+    const hoy = new Date();
+    const diasMes = getDaysInMonth(hoy);
+    const labels = Array.from({ length: diasMes }, (_, i) =>
+      (i + 1).toString()
+    );
+
+    const dataPorDia = Array(diasMes).fill(0);
+
+    asisteniciasAll.forEach((item) => {
+      if (
+        !item.horaEntrada ||
+        item.horaEntrada === null ||
+        item.horaEntrada === ""
+      ) {
+        // Falta
+        const dia = new Date(item.fecha).getDate() - 1;
+        dataPorDia[dia] = 1;
+        return;
+      }
+
+      const fecha = new Date(item.horaEntrada);
+      const dia = fecha.getDate() - 1;
+
+      const horaEntrada = fecha.toLocaleTimeString("es-PE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+
+      // Clasificar
+      if (horaEntrada <= horaLimite) {
+        dataPorDia[dia] = 5; // puntual
+      } else {
+        dataPorDia[dia] = 3; // tardanza
+      }
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          data: dataPorDia,
+          color: (opacity = 1) => `rgba(52, 199, 89, ${opacity})`,
+          strokeWidth: 2,
+        },
+      ],
+    };
+  };
+
+  useEffect(() => {
+    if (asisteniciasAll.length > 0) {
+      const resultados = asisteniciasAll.reduce(
+        (acc, item) => {
+          if (
+            !item.horaEntrada ||
+            item.horaEntrada === null ||
+            item.horaEntrada === ""
+          ) {
+            acc.falta++;
+            return acc;
+          }
+
+          const horaEntrada = new Date(item.horaEntrada).toLocaleTimeString(
+            "es-PE",
+            {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            }
+          );
+
+          if (horaEntrada <= horaLimite) {
+            acc.puntual++;
+          } else {
+            acc.tardanza++;
+          }
+
+          return acc;
+        },
+        { puntual: 0, tardanza: 0, falta: 0 }
+      );
+
+      setConteo(resultados);
+    }
+  }, [asisteniciasAll]);
 
   useEffect(() => {
     setLoandingMain(true);
@@ -221,9 +332,13 @@ export const AuthProvider = ({ children }) => {
     setFechaHoy(fecha);
     capturarAsistencia();
     obtenerlistaAsistencias();
+    compararFecha();
+    console.log("holaz");
+    
   }, []);
 
   const value = {
+    textoTiempo,
     Autentication,
     Registrado,
     entradaDisable,
@@ -238,12 +353,15 @@ export const AuthProvider = ({ children }) => {
     user,
     horaLimite,
     asisteniciasAll,
+    conteo,
     crearUser,
     iniciarSesion,
     createNewAsistencia,
     obtenerlistaAsistencias,
     registrarSalida,
     cerrarSesion,
+    compararFecha,
+    generarDatosAsistencia,
   };
 
   return (

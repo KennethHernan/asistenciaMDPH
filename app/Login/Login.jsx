@@ -2,7 +2,14 @@ import { useAuth } from "@/context/AuthContext";
 import { globalStyles } from "@/styles/globalStyles";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 export default function LoginScreen() {
   const { iniciarSesion, Autentication } = useAuth();
   const router = useRouter();
@@ -50,10 +57,14 @@ export default function LoginScreen() {
           setErrorEmail(true);
           setErrorContraseña(true);
           return setError("Demasiados intentos fallidos. Intenta más tarde.");
-            }
+        default:
+          setErrorEmail(true);
+          setErrorContraseña(true);
+          return setError("Demasiados intentos fallidos. Intenta más tarde.");
+      }
     } catch (err) {
       console.log(err);
-      setError("Error inesperado al iniciar sesión.");
+      console.log("Error inesperado al iniciar sesión.");
     } finally {
       setLoading(false);
     }
@@ -84,10 +95,20 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <Button
-        title={loading ? "Ingresando..." : "Entrar"}
-        onPress={handleLogin}
-      />
+      <TouchableOpacity
+        disabled={loading}
+        onPress={() => handleLogin()}
+        style={[
+          globalStyles.buttonlogin,
+          loading ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
+          { marginBottom: 10 },
+        ]}
+        activeOpacity={0.8}
+      >
+        <Text style={[globalStyles.buttonText, { fontWeight: "500" }]}>
+          Ingresar
+        </Text>
+      </TouchableOpacity>
 
       {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -110,13 +131,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     textAlign: "center",
     marginBottom: 20,
   },
   registerText: {
     textAlign: "center",
-    color: "blue",
+    color: "dark",
     marginTop: 10,
   },
   errorText: {

@@ -56,7 +56,7 @@ export default function Header({ title }) {
           <TouchableOpacity
             onPress={() => setModal(false)}
             style={{
-              position: "fixed",
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,

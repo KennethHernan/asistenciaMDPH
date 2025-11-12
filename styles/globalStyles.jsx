@@ -84,7 +84,7 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 15,
     selectionColor: "#373737ff",
     underlineColorAndroid: "none",
-    outlineStyle: "none"
+    outlineStyle: "none",
   },
   loader: {
     position: "absolute",
@@ -138,6 +138,16 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  buttonlogin: {
+    borderRadius: 10,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 12,
+    display: "flex",
+    flexDirection: "row",
+    gap: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   button2: {
     borderRadius: 12,
     paddingHorizontal: spacing.lg,
@@ -189,6 +199,14 @@ export const globalStyles = StyleSheet.create({
   buttonFaltaInjustificadaDisable: {
     backgroundColor: colors.white,
     borderColor: colors.faltaIDisable,
+  },
+  flex: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.sm,
+    marginBottom: 5,
   },
   title: {
     ...typography.h1,

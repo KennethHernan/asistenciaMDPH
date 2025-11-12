@@ -1,8 +1,10 @@
 import Header from "@/components/header";
 import TablaAsistencia from "@/components/tabla-asistencia";
+import { useAuth } from "@/context/AuthContext";
 import { colors, globalStyles, spacing } from "@/styles/globalStyles";
 import { ScrollView, Text, View } from "react-native";
 export default function RegistroScreen() {
+    const { textoTiempo } = useAuth();
   return (
     <ScrollView style={globalStyles.container}>
       {/* Header */}
@@ -10,16 +12,16 @@ export default function RegistroScreen() {
 
       {/* Body */}
       <View style={globalStyles.card}>
-        <View>
+        <View style={globalStyles.flex}>
           <Text style={globalStyles.subtitle}>Registro</Text>
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             <Text
               style={[
                 globalStyles.text,
-                { color: colors.text_plomo, marginBottom: spacing.sm },
+                { color: colors.text_plomo},
               ]}
             >
-              Último 30 días
+              Último registro { textoTiempo }
             </Text>
           </View>
         </View>
