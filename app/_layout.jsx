@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 export default function RootLayout() {
   return (
     <>
-      <StatusBar style="light" backgroundColor="#1e1e1e" />
+      <StatusBar style="dark" backgroundColor="#fff" />
 
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthProvider>

@@ -7,7 +7,6 @@ import Icon_Registro_Active from "@/assets/icons/icon_registro_active.svg";
 import { useAuth } from "@/context/AuthContext";
 import { Redirect, Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-
 export default function RootLayout() {
   const { Autentication, loandingMain } = useAuth();
   if (loandingMain) return;
@@ -15,10 +14,9 @@ export default function RootLayout() {
   if (!Autentication && !loandingMain) {
     return <Redirect href="/Login/Login" />;
   }
-
   return (
     <>
-      <StatusBar style="light" backgroundColor="#1e1e1e" />
+      <StatusBar style="dark" backgroundColor="#fff" />
       <Tabs
         screenOptions={{
           headerShown: false, // Barra superior visible

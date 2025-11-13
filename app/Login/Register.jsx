@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { globalStyles } from "@/styles/globalStyles";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
   const { Registrado, crearUser } = useAuth();
@@ -54,7 +54,7 @@ export default function LoginScreen() {
       <TextInput
         style={[
           globalStyles.input,
-          errorEmail && error ? globalStyles.inputError : "",
+          errorEmail ? globalStyles.inputError : "",
         ]}
         placeholder="Correo electrónico"
         value={email}
@@ -65,7 +65,7 @@ export default function LoginScreen() {
       <TextInput
         style={[
           globalStyles.input,
-          errorContraseña && error ? globalStyles.inputError : "",
+          errorContraseña ? globalStyles.inputError : "",
         ]}
         placeholder="Contraseña"
         value={password}
@@ -73,12 +73,21 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <Button
-        style={globalStyles.Button}
-        title={loading ? "Ingresando..." : "Entrar"}
-        onPress={handleRegister}
-      />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      <TouchableOpacity
+        disabled={loading}
+        onPress={() => handleRegister()}
+        style={[
+          globalStyles.buttonlogin,
+          loading ? globalStyles.buttonPrimary2 : globalStyles.buttonPrimary,
+          { marginBottom: 10 },
+        ]}
+        activeOpacity={0.8}
+      >
+        <Text style={[globalStyles.buttonText, { fontWeight: "500" }]}>
+          Registrar
+        </Text>
+      </TouchableOpacity>
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <Text
         style={styles.registerText}
@@ -98,15 +107,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "semibold",
     textAlign: "center",
     marginBottom: 20,
   },
   registerText: {
     textAlign: "center",
-    color: "blue",
-    marginTop: 15,
+    color: "#222",
+    marginTop: 10,
   },
   errorText: {
     fontSize: 12,

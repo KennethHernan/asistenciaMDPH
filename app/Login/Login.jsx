@@ -77,7 +77,7 @@ export default function LoginScreen() {
       <TextInput
         style={[
           globalStyles.input,
-          errorEmail && error ? globalStyles.inputError : "",
+          errorEmail ? globalStyles.inputError : null,
         ]}
         placeholder="Correo electrónico"
         value={email}
@@ -87,7 +87,7 @@ export default function LoginScreen() {
       <TextInput
         style={[
           globalStyles.input,
-          errorContraseña && error ? globalStyles.inputError : "",
+          errorContraseña ? globalStyles.inputError : null,
         ]}
         placeholder="Contraseña"
         value={password}
@@ -110,7 +110,7 @@ export default function LoginScreen() {
         </Text>
       </TouchableOpacity>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <Text
         style={styles.registerText}
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   registerText: {
     textAlign: "center",
-    color: "dark",
+    color: "#222",
     marginTop: 10,
   },
   errorText: {

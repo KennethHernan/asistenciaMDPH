@@ -3,6 +3,7 @@ import { auth, db } from "@/firebase/firebaseConfig";
 import { capturarDia, capturarFecha, capturarMes } from "@/service/fechaHoy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { differenceInCalendarDays, getDaysInMonth } from "date-fns";
+import * as Updates from "expo-updates";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -26,7 +27,6 @@ export const AuthProvider = ({ children }) => {
   const [loandingMain, setLoandingMain] = useState(true);
   const [entradaDisable, setEntrada] = useState(false);
   const [salidaDisable, setSalida] = useState(true);
-  const [newDia, setNewdia] = useState(false);
   const [asisteniciasAll, setAsistencias] = useState(false);
   const [Autentication, setAutentication] = useState(false);
   const [Registrado, setRegistrado] = useState(false);
@@ -39,6 +39,8 @@ export const AuthProvider = ({ children }) => {
     tardanza: 0,
     falta: 0,
   });
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const crearUser = async (email, password) => {
     try {
@@ -333,8 +335,28 @@ export const AuthProvider = ({ children }) => {
     capturarAsistencia();
     obtenerlistaAsistencias();
     compararFecha();
-    console.log("holaz");
-    
+  }, []);
+
+  //Buscar atualizaciones
+  useEffect(() => {
+    async function checkForUpdates() {
+      setCheckingUpdate(true);
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          setIsUpdating(true);
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (error) {
+        console.log("Error al buscar actualizaciones:", error);
+        setIsUpdating(false);
+      } finally {
+        setCheckingUpdate(false);
+      }
+    }
+
+    checkForUpdates();
   }, []);
 
   const value = {
@@ -354,6 +376,7 @@ export const AuthProvider = ({ children }) => {
     horaLimite,
     asisteniciasAll,
     conteo,
+    isUpdating,
     crearUser,
     iniciarSesion,
     createNewAsistencia,
@@ -368,7 +391,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={value}>
       {children}
 
-      {loandingMain && <Loanding />}
+      {loandingMain || checkingUpdate || isUpdating ? <Loanding /> : null}
     </AuthContext.Provider>
   );
 };

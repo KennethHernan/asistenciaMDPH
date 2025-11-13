@@ -18,5 +18,5 @@ export default function Index() {
 
   if (loandingMain) return;
 
-  return null; 
+  return null;
 }

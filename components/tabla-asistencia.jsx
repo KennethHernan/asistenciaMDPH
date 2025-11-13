@@ -1,14 +1,20 @@
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { colors, globalStyles } from "../styles/globalStyles";
 
 export default function TablaAsistencia() {
-  const { asisteniciasAll, horaLimite } = useAuth();
+  const { asisteniciasAll, horaLimite, compararFecha } = useAuth();
   const Tardanza = "◉ T";
   const Puntual = "◉ P";
   const Falta = "◉ F";
+
+  
+    useEffect(() => {
+      compararFecha();
+    }, []);
 
   return (
     <View style={globalStyles.table}>

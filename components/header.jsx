@@ -51,7 +51,7 @@ export default function Header({ title }) {
           }}
         />
       </TouchableOpacity>
-      {modal && (
+      {modal ? (
         <>
           <TouchableOpacity
             onPress={() => setModal(false)}
@@ -105,7 +105,7 @@ export default function Header({ title }) {
             </Text>
           </View>
         </>
-      )}
+      ): null}
     </View>
   );
 }
