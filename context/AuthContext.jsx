@@ -1,4 +1,5 @@
 import Loanding from "@/components/loanding";
+import Mensage from "@/components/mensage";
 import { auth, db } from "@/firebase/firebaseConfig";
 import { capturarDia, capturarFecha, capturarMes } from "@/service/fechaHoy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,7 +14,6 @@ import { child, get, ref, set, update } from "firebase/database";
 import { createContext, useContext, useEffect, useState } from "react";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
-
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
@@ -32,8 +32,9 @@ export const AuthProvider = ({ children }) => {
   const [Registrado, setRegistrado] = useState(false);
   const [fechaHoy, setFechaHoy] = useState("");
   const [mes, setMes] = useState("");
-  const [horaLimite, setHoraLimite] = useState("08:45:00 a. m.");
+  const [horaLimite, setHoraLimite] = useState("08:46:00 a. m.");
   const [textoTiempo, setTextoTiempo] = useState("");
+  const [menssage, setMenssage] = useState("");
   const [conteo, setConteo] = useState({
     puntual: 0,
     tardanza: 0,
@@ -44,13 +45,7 @@ export const AuthProvider = ({ children }) => {
 
   const crearUser = async (email, password) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      setUser(user);
+      await createUserWithEmailAndPassword(auth, email, password);
       setRegistrado(true);
       return;
     } catch (error) {
@@ -60,7 +55,6 @@ export const AuthProvider = ({ children }) => {
 
   const cerrarSesion = async () => {
     await signOut(auth);
-    //cambiarAutenticacionStorage(false);
     setAutentication(false);
     await AsyncStorage.removeItem("asistencia");
     setSalida(false);
@@ -79,6 +73,7 @@ export const AuthProvider = ({ children }) => {
         autentication: true,
         fecha: fechaHoy,
       };
+      setUser(email);
       await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       return;
     } catch (error) {
@@ -87,14 +82,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const createNewAsistencia = async () => {
-    console.log("salidaDisable:", salidaDisable);
     if (entradaDisable) return;
-    console.log("HOLA");
     setLoandingBtnEntrada(true);
     try {
       const asistenId = uuidv4();
       const diaHoy = capturarDia();
-      await set(ref(db, `asistencias/${asistenId}`), {
+      await set(ref(db, `asistencias/${user}/${asistenId}`), {
         asistenciaId: asistenId,
         nombre: "Kenneth",
         horaEntrada: { ".sv": "timestamp" },
@@ -106,6 +99,7 @@ export const AuthProvider = ({ children }) => {
       setEntrada(true);
       setSalida(false);
       setLoandingBtnEntrada(false);
+      compararFecha();
       obtenerlistaAsistencias();
       return;
     } catch (error) {
@@ -125,15 +119,19 @@ export const AuthProvider = ({ children }) => {
 
       if (data) {
         const asistencia = JSON.parse(data);
-        await update(ref(db, `asistencias/${asistencia.asistenciaId}`), {
-          horaSalida: { ".sv": "timestamp" },
-        });
+        await update(
+          ref(db, `asistencias/${user}/${asistencia.asistenciaId}`),
+          {
+            horaSalida: { ".sv": "timestamp" },
+          }
+        );
 
         asistencia.salida = true;
         await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
       }
       setSalida(true);
       setLoandingBtnSalida(false);
+      compararFecha();
       obtenerlistaAsistencias();
     } catch (error) {
       setLoandingBtnSalida(false);
@@ -227,15 +225,13 @@ export const AuthProvider = ({ children }) => {
       );
 
       const fechaAsistencia = new Date(ultima.horaEntrada);
-
       const diff = differenceInCalendarDays(hoy, fechaAsistencia);
       if (diff === 0) setTextoTiempo("hoy");
-      else if (diff === 1) setTextoTiempo("hace 1 día");
+      else if (diff === 1) setTextoTiempo("ayer");
       else if (diff === 2) setTextoTiempo("hace 2 días");
       else setTextoTiempo(`hace ${diff} días`);
-      console.log("Date");
+      return;
     }
-    setLoandingMain(false);
   };
 
   // Grafico Evalución
@@ -321,8 +317,8 @@ export const AuthProvider = ({ children }) => {
         },
         { puntual: 0, tardanza: 0, falta: 0 }
       );
-
       setConteo(resultados);
+      compararFecha();
     }
   }, [asisteniciasAll]);
 
@@ -334,7 +330,7 @@ export const AuthProvider = ({ children }) => {
     setFechaHoy(fecha);
     capturarAsistencia();
     obtenerlistaAsistencias();
-    compararFecha();
+    setLoandingMain(false);
   }, []);
 
   //Buscar atualizaciones
@@ -350,9 +346,12 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.log("Error al buscar actualizaciones:", error);
+        setMenssage(error);
+        setCheckingUpdate(false);
         setIsUpdating(false);
       } finally {
         setCheckingUpdate(false);
+        setIsUpdating(false);
       }
     }
 
@@ -371,6 +370,7 @@ export const AuthProvider = ({ children }) => {
     loandingBtnFaltaJ,
     loandingBtnSalida,
     loandingMain,
+    menssage,
     mes,
     user,
     horaLimite,
@@ -385,12 +385,13 @@ export const AuthProvider = ({ children }) => {
     cerrarSesion,
     compararFecha,
     generarDatosAsistencia,
+    setMenssage,
   };
 
   return (
     <AuthContext.Provider value={value}>
       {children}
-
+      {menssage ? <Mensage texto={menssage} /> : null}
       {loandingMain || checkingUpdate || isUpdating ? <Loanding /> : null}
     </AuthContext.Provider>
   );

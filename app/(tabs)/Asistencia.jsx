@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 
+
 export default function AsistenciaScreen() {
   const {
     createNewAsistencia,
@@ -33,7 +34,7 @@ export default function AsistenciaScreen() {
       })
     ).start();
   }, [rotateAnim]);
-
+  
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "360deg"],

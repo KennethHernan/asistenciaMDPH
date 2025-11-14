@@ -11,13 +11,11 @@ export default function Loanding() {
         color="#767676ff"
         style={{ transform: [{ scale: 0.7 }] }}
       />
-      {isUpdating ? (
-        <Text style={globalStyles.textInfo}>
-          {isUpdating
-            ? "Instalando actualización..."
-            : "Buscando actualizaciones..."}
-        </Text>
-      ) : null}
+      <Text style={globalStyles.textInfo}>
+        {isUpdating
+          ? "Instalando actualización..."
+          : "Buscando actualizaciones..."}
+      </Text>
     </View>
   );
 }

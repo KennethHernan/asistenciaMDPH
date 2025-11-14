@@ -1,27 +1,20 @@
 import { useAuth } from "@/context/AuthContext";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { colors, globalStyles } from "../styles/globalStyles";
 
 export default function ComponeteAsistencia() {
   const { asisteniciasAll, horaLimite, textoTiempo, compararFecha } = useAuth();
-  const [textoinfo, setTextoinfo] = useState("");
-
   const Tardanza = "◉ T";
   const Puntual = "◉ P";
   const Falta = "◉ F";
-
-  useEffect(() => {
-    compararFecha();
-  }, []);
 
   return (
     <View style={globalStyles.card}>
       <View style={globalStyles.flex}>
         <Text style={globalStyles.subtitle}>Última Asistencia</Text>
-        <Text style={globalStyles.textInfo}>◉ {textoTiempo}</Text>
+        <Text style={[globalStyles.textInfo, textoTiempo === "hoy" ? { color:colors.secondary2 }: null]}>◉ {textoTiempo}</Text>
       </View>
       {/* Tabla */}
       <View style={globalStyles.table}>
