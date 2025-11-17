@@ -14,10 +14,9 @@ const screenWidth = Dimensions.get("window").width;
 
 export default function DashboardScreen() {
   const { conteo, generarDatosAsistencia, asisteniciasAll } = useAuth();
-
-  const data = useMemo(() => generarDatosAsistencia(), [asisteniciasAll]);
   const router = useRouter();
-
+  const data = useMemo(() => generarDatosAsistencia(), [asisteniciasAll]);
+  
   return (
     <ScrollView style={globalStyles.container}>
       {/* Header */}

@@ -184,6 +184,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await listAsistencias();
       setAsistencias(data);
+      setLoandingMain(false);
     } catch (error) {
       console.error("Error al cargar asistencias:", error);
     }
@@ -287,24 +288,29 @@ export const AuthProvider = ({ children }) => {
 
   //Buscar atualizaciones
   const checkForUpdates = async () => {
-    setCheckingUpdate(true);
     try {
-      const update = await Updates.checkForUpdateAsync();
-      if (update.isAvailable) {
-        setIsUpdating(true);
-        await Updates.fetchUpdateAsync();
-        await Updates.reloadAsync();
+      setCheckingUpdate(true);
+      setMenssage(null);
+      const result = await Updates.checkForUpdateAsync();
+
+      if (!result.isAvailable) {
+        //No hay actualizaciones disponibles
+        return;
       }
+
+      setIsUpdating(true);
+
+      await Updates.fetchUpdateAsync();
+      await Updates.reloadAsync();
     } catch (error) {
-      console.log("Error al buscar actualizaciones:", error);
+      //Error al buscar/instalar actualizaciones
       setMenssage(error);
-      setCheckingUpdate(false);
-      setIsUpdating(false);
     } finally {
       setCheckingUpdate(false);
       setIsUpdating(false);
     }
   };
+
   useEffect(() => {
     if (asisteniciasAll.length > 0) {
       const resultados = asisteniciasAll.reduce(
@@ -342,6 +348,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [asisteniciasAll]);
 
+  // USEEFFECT MAIN
   useEffect(() => {
     setLoandingMain(true);
     checkForUpdates();
@@ -351,7 +358,6 @@ export const AuthProvider = ({ children }) => {
     setFechaHoy(fecha);
     capturarAsistencia();
     obtenerlistaAsistencias();
-    setLoandingMain(false);
   }, []);
 
   const value = {
