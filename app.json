@@ -58,7 +58,8 @@
     "updates": {
       "enabled": true,
       "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/34a937dd-2551-41ea-ac80-ee096416709c"
+      "url": "https://u.expo.dev/34a937dd-2551-41ea-ac80-ee096416709c",
+      "checkAutomatically": "ON_LOAD"
     }
   }
 }

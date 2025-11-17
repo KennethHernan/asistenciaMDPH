@@ -202,11 +202,11 @@ export const AuthProvider = ({ children }) => {
           asistencia.salida = false;
           asistencia.fechaHoy = fechaHoy;
           await AsyncStorage.setItem("asistencia", JSON.stringify(asistencia));
-          setSalida(false);
-          setEntrada(false);
+          setAutentication(asistencia.autentication);
+          setEntrada(asistencia.entrada);
+          setSalida(asistencia.salida);
           return;
         }
-
         setAutentication(asistencia.autentication);
         setEntrada(asistencia.entrada);
         setSalida(asistencia.salida);
@@ -285,6 +285,26 @@ export const AuthProvider = ({ children }) => {
     };
   };
 
+  //Buscar atualizaciones
+  const checkForUpdates = async () => {
+    setCheckingUpdate(true);
+    try {
+      const update = await Updates.checkForUpdateAsync();
+      if (update.isAvailable) {
+        setIsUpdating(true);
+        await Updates.fetchUpdateAsync();
+        await Updates.reloadAsync();
+      }
+    } catch (error) {
+      console.log("Error al buscar actualizaciones:", error);
+      setMenssage(error);
+      setCheckingUpdate(false);
+      setIsUpdating(false);
+    } finally {
+      setCheckingUpdate(false);
+      setIsUpdating(false);
+    }
+  };
   useEffect(() => {
     if (asisteniciasAll.length > 0) {
       const resultados = asisteniciasAll.reduce(
@@ -324,6 +344,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     setLoandingMain(true);
+    checkForUpdates();
     const fecha = capturarFecha();
     const mesActual = capturarMes();
     setMes(mesActual);
@@ -331,31 +352,6 @@ export const AuthProvider = ({ children }) => {
     capturarAsistencia();
     obtenerlistaAsistencias();
     setLoandingMain(false);
-  }, []);
-
-  //Buscar atualizaciones
-  useEffect(() => {
-    async function checkForUpdates() {
-      setCheckingUpdate(true);
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          setIsUpdating(true);
-          await Updates.fetchUpdateAsync();
-          await Updates.reloadAsync();
-        }
-      } catch (error) {
-        console.log("Error al buscar actualizaciones:", error);
-        setMenssage(error);
-        setCheckingUpdate(false);
-        setIsUpdating(false);
-      } finally {
-        setCheckingUpdate(false);
-        setIsUpdating(false);
-      }
-    }
-
-    checkForUpdates();
   }, []);
 
   const value = {
